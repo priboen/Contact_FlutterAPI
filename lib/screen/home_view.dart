@@ -26,9 +26,28 @@ class _HomeViewState extends State<HomeView> {
       body: FutureBuilder<List<Kontak>>(
           future: _controller.getPeople(),
           builder: (context, snapshot) {
-            return ListView.builder(
-                itemCount: snapshot.data?.length ?? 0,
-                itemBuilder: (context, index) {});
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text('Error: ${snapshot.error}'),
+              );
+            } else {
+              return ListView.builder(
+                  itemCount: snapshot.data?.length ?? 0,
+                  itemBuilder: (context, index) {
+                    Kontak person = snapshot.data![index];
+                    return ListTile(
+                      title: Text(person.nama),
+                      subtitle: Text(person.email),
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(person.foto),
+                      ),
+                    );
+                  });
+            }
           }),
     );
   }
