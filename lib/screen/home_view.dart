@@ -1,4 +1,5 @@
 import 'package:data_kontak/controller/kontak_controller.dart';
+import 'package:data_kontak/model/kontak.dart';
 import 'package:flutter/material.dart';
 
 class HomeView extends StatefulWidget {
@@ -22,6 +23,13 @@ class _HomeViewState extends State<HomeView> {
       appBar: AppBar(
         title: const Text("Daftar Orang"),
       ),
+      body: FutureBuilder<List<Kontak>>(
+          future: _controller.getPeople(),
+          builder: (context, snapshot) {
+            return ListView.builder(
+                itemCount: snapshot.data?.length ?? 0,
+                itemBuilder: (context, index) {});
+          }),
     );
   }
 }
