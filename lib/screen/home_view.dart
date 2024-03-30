@@ -16,7 +16,12 @@ class _HomeViewState extends State<HomeView> {
     _controller.getPeople();
   }
 
+  @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Daftar Orang"),
+      ),
+    );
   }
 }
