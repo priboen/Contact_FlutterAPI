@@ -40,7 +40,7 @@ class KontakService {
       final Map<String, dynamic> decodedResponse = json.decode(response.body);
       return decodedResponse['people'];
     } else {
-      throw Exception('Failed to load data');
+      throw Exception('Failed to load people: ${response.reasonPhrase}');
     }
   }
 }
