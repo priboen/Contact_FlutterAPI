@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:data_kontak/model/kontak.dart';
 import 'package:data_kontak/services/kontak_service.dart';
-import 'package:flutter/material.dart';
 
 class KontakController {
   final kontakService = KontakService();
@@ -42,5 +41,12 @@ class KontakController {
     } catch (e) {
       return {"success": false, "message": 'Terjadi kesalahan: $e'};
     }
+  }
+
+  Future<List<Kontak>> getPeople() async {
+    List<dynamic> peopleData = await kontakService.fetchPeople();
+    List<Kontak> people =
+        peopleData.map((json) => Kontak.fromMap(json)).toList();
+    return people;
   }
 }
