@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:data_kontak/controller/kontak_controller.dart';
 import 'package:data_kontak/model/kontak.dart';
+import 'package:data_kontak/screen/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -104,6 +105,12 @@ class _FormKontakState extends State<FormKontak> {
                             result['message'],
                           ),
                         ),
+                      );
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HomeView()),
+                        (route) => false,
                       );
                     }
                   },
