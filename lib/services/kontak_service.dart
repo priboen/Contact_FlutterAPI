@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 
@@ -24,5 +25,22 @@ class KontakService {
     }
 
     return await http.Response.fromStream(await request.send());
+  }
+
+  Future<List<dynamic>> fetchPeople() async {
+    var response = await http.get(
+        getUri(
+          endpoint,
+        ),
+        headers: {
+          "Accept": "application/json",
+        });
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> decodedResponse = json.decode(response.body);
+      return decodedResponse['people'];
+    } else {
+      throw Exception('Failed to load data');
+    }
   }
 }
