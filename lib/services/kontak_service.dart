@@ -10,23 +10,6 @@ class KontakService {
     return Uri.parse("$baseUrl$path");
   }
 
-  Future<http.Response> addPerson(Map<String, String> data, File? file) async {
-    var request = http.MultipartRequest(
-      'POST',
-      getUri(endpoint),
-    )
-      ..fields.addAll(data)
-      ..headers['Content-Type'] = 'application/json';
-
-    if (file != null) {
-      request.files.add(await http.MultipartFile.fromPath('gambar', file.path));
-    } else {
-      request.files.add(http.MultipartFile.fromString('gambar', ''));
-    }
-
-    return await http.Response.fromStream(await request.send());
-  }
-
   Future<List<dynamic>> fetchPeople() async {
     var response = await http.get(
         getUri(
@@ -42,5 +25,22 @@ class KontakService {
     } else {
       throw Exception('Failed to load people: ${response.reasonPhrase}');
     }
+  }
+
+  Future<http.Response> addPerson(Map<String, String> data, File? file) async {
+    var request = http.MultipartRequest(
+      'POST',
+      getUri(endpoint),
+    )
+      ..fields.addAll(data)
+      ..headers['Content-Type'] = 'application/json';
+
+    if (file != null) {
+      request.files.add(await http.MultipartFile.fromPath('gambar', file.path));
+    } else {
+      request.files.add(http.MultipartFile.fromString('gambar', ''));
+    }
+
+    return await http.Response.fromStream(await request.send());
   }
 }

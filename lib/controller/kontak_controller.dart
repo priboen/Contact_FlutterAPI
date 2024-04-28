@@ -12,7 +12,7 @@ class KontakController {
       "nama": person.nama,
       "email": person.email,
       "alamat": person.alamat,
-      "telepon": person.telepon
+      "no_telepon": person.telepon
     };
 
     try {
