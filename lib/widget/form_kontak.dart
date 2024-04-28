@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:data_kontak/controller/kontak_controller.dart';
 import 'package:data_kontak/model/kontak.dart';
 import 'package:data_kontak/screen/home_view.dart';
+import 'package:data_kontak/screen/map_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -17,10 +18,10 @@ class _FormKontakState extends State<FormKontak> {
   final _formKey = GlobalKey<FormState>();
   final _namaController = TextEditingController();
   final _emailController = TextEditingController();
-  final _alamatController = TextEditingController();
   final _teleponController = TextEditingController();
 
   File? _image;
+  String? _alamat;
   final _imagePicker = ImagePicker();
 
   Future<void> getImage() async {
@@ -31,8 +32,6 @@ class _FormKontakState extends State<FormKontak> {
       () {
         if (pickedFile != null) {
           _image = File(pickedFile.path);
-        } else {
-          print("No image selected");
         }
       },
     );
@@ -63,11 +62,54 @@ class _FormKontakState extends State<FormKontak> {
                 ),
               ),
               Container(
-                margin: const EdgeInsets.all(10),
-                child: TextFormField(
-                  decoration: const InputDecoration(
-                      labelText: "Alamat", hintText: "Masukkan Alamat Anda"),
-                  controller: _alamatController,
+                width: double.infinity,
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("Alamat"),
+                    _alamat == null
+                        ? const SizedBox(
+                            width: double.infinity,
+                            child: Text("Alamat Kosong"))
+                        : Text('$_alamat'),
+                    _alamat == null
+                        ? TextButton(
+                            onPressed: () async {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MapScreen(
+                                      onLocationSelected: (selectedAddress) {
+                                    setState(() {
+                                      _alamat = selectedAddress;
+                                    });
+                                  }),
+                                ),
+                              );
+                            },
+                            child: const Text('Pilih Alamat'),
+                          )
+                        : TextButton(
+                            onPressed: () async {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MapScreen(
+                                      onLocationSelected: (selectedAddress) {
+                                    setState(() {
+                                      _alamat = selectedAddress;
+                                    });
+                                  }),
+                                ),
+                              );
+                              setState(() {
+                                {}
+                              });
+                            },
+                            child: const Text('Ubah Alamat'),
+                          ),
+                  ],
                 ),
               ),
               Container(
@@ -95,7 +137,7 @@ class _FormKontakState extends State<FormKontak> {
                           Kontak(
                               nama: _namaController.text,
                               email: _emailController.text,
-                              alamat: _alamatController.text,
+                              alamat: _alamat ?? '',
                               telepon: _teleponController.text,
                               foto: _image!.path),
                           _image,
