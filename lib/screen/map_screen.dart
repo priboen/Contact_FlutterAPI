@@ -15,15 +15,27 @@ class _MapScreenState extends State<MapScreen> {
   LatLng? _lastMapPosition;
 
   @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
   }
 
-  void _getCurrentLocation() {
-    Geolocator.requestPermission()
+  Future<void> _getCurrentLocation() async {
+    await Geolocator.requestPermission()
         .then((value) {})
-        .onError((error, stackTrace) {
-      Geolocator.requestPermission();
+        .onError((error, stackTrace) async {
+      await Geolocator.requestPermission();
     });
+    var position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    setState(() {
+      _lastMapPosition = LatLng(position.latitude, position.longitude);
+    });
+    mapController.animateCamera(CameraUpdate.newLatLng(_lastMapPosition!));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold();
   }
 }
