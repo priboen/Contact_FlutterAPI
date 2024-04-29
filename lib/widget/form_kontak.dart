@@ -40,6 +40,9 @@ class _FormKontakState extends State<FormKontak> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Masukan Data"),
+      ),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -79,7 +82,7 @@ class _FormKontakState extends State<FormKontak> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => MapScreen(
+                                  builder: (context) => MapsScreen(
                                       onLocationSelected: (selectedAddress) {
                                     setState(() {
                                       _alamat = selectedAddress;
@@ -95,7 +98,7 @@ class _FormKontakState extends State<FormKontak> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => MapScreen(
+                                  builder: (context) => MapsScreen(
                                       onLocationSelected: (selectedAddress) {
                                     setState(() {
                                       _alamat = selectedAddress;

@@ -3,43 +3,44 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class MapScreen extends StatefulWidget {
+class MapsScreen extends StatefulWidget {
   final Function(String) onLocationSelected;
-  const MapScreen({super.key, required this.onLocationSelected});
+  const MapsScreen({super.key, required this.onLocationSelected});
 
   @override
-  _MapScreenState createState() => _MapScreenState();
+  State<MapsScreen> createState() => _MapsScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
+class _MapsScreenState extends State<MapsScreen> {
   late GoogleMapController mapController;
-  LatLng? _lastMapPosition;
+  LatLng? lastMapPosition;
 
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
+    getCurrentLocation();
   }
 
-  Future<void> _getCurrentLocation() async {
+  Future<void> getCurrentLocation() async {
     await Geolocator.requestPermission()
         .then((value) {})
         .onError((error, stackTrace) async {
       await Geolocator.requestPermission();
     });
+
     var position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     setState(() {
-      _lastMapPosition = LatLng(position.latitude, position.longitude);
+      lastMapPosition = LatLng(position.latitude, position.longitude);
     });
-    mapController.animateCamera(CameraUpdate.newLatLng(_lastMapPosition!));
+    mapController.animateCamera(CameraUpdate.newLatLng(lastMapPosition!));
   }
 
-  void _onMapCreated(GoogleMapController controller) {
+  void onMapCreated(GoogleMapController controller) {
     mapController = controller;
-    if (_lastMapPosition != null) {
+    if (lastMapPosition != null) {
       setState(() {
-        mapController.animateCamera(CameraUpdate.newLatLng(_lastMapPosition!));
+        mapController.animateCamera(CameraUpdate.newLatLng(lastMapPosition!));
       });
     }
   }
@@ -48,30 +49,29 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Select Location"),
+        title: Text("Select Location"),
       ),
       body: GoogleMap(
         myLocationEnabled: true,
         myLocationButtonEnabled: true,
         buildingsEnabled: true,
         trafficEnabled: true,
-        zoomControlsEnabled: true,
-        rotateGesturesEnabled: true,
-        mapToolbarEnabled: true,
         compassEnabled: true,
-        onMapCreated: _onMapCreated,
+        onMapCreated: onMapCreated,
         initialCameraPosition: CameraPosition(
-            target: _lastMapPosition ?? const LatLng(0.0, 0.0), zoom: 20.0),
+          target: lastMapPosition ?? const LatLng(0.0, 0.0),
+          zoom: 15.0,
+        ),
         markers: {
-          if (_lastMapPosition != null)
+          if (lastMapPosition != null)
             Marker(
               markerId: const MarkerId('currentLocation'),
-              position: _lastMapPosition!,
+              position: lastMapPosition!,
             )
         },
         onTap: (position) {
           setState(() {
-            _lastMapPosition = position;
+            lastMapPosition = position;
           });
         },
       ),
@@ -81,21 +81,25 @@ class _MapScreenState extends State<MapScreen> {
         children: [
           FloatingActionButton(
             onPressed: () async {
-              if (_lastMapPosition != null) {
-                List<Placemark> placemark = await placemarkFromCoordinates(
-                    _lastMapPosition!.latitude, _lastMapPosition!.longitude);
-                if (placemark.isNotEmpty) {
-                  Placemark place = placemark[0];
+              if (lastMapPosition != null) {
+                List<Placemark> placemarks = await placemarkFromCoordinates(
+                  lastMapPosition!.latitude,
+                  lastMapPosition!.longitude,
+                );
+
+                if (placemarks.isNotEmpty) {
+                  Placemark place = placemarks[0];
                   String fullAddress =
-                      "${place.name}, ${place.street}, ${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}";
+                      "${place.name},${place.street},${place.subLocality},${place.locality},${place.postalCode},${place.country}";
                   widget.onLocationSelected(fullAddress);
                 } else {
-                  widget.onLocationSelected("No Address Found");
+                  widget.onLocationSelected("No address found");
                 }
+
                 Navigator.pop(context);
               }
             },
-            child: const Text("Submit"),
+            child: const Text('Submit'),
           )
         ],
       ),
